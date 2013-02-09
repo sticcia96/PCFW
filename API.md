@@ -15,7 +15,8 @@ Function | Description | Returns
 
 ### Priority
 To make the different scripts run in correct order, the event manager contains a priority.<br />
-When writing priorities, please use either an integer or `PCFW.events.priority`.
+When writing priorities, please use either an integer or `PCFW.events.priority`.<br />
+Events with highest priority gets run first (HIGHEST to LOWEST, 0 => 4).
 
 Priority | Value
 --- | ---
