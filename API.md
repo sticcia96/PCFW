@@ -1,4 +1,3 @@
----
 [required]<br />
 &lt;optional&gt;
 ## Events
