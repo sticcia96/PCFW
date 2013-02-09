@@ -2,7 +2,7 @@
 title: API
 ----
 [required]<br />
-\<optional\>
+&lt;optional&gt;
 ## Events
 Plug.dj Coding FrameWork contains an event manager, `PCFW.events`, that extends the original plug.dj API event system.<br />
 All API events will also be emitted by PCFW.
