@@ -2,9 +2,18 @@
 # API
 [required]<br />
 &lt;optional&gt;
+
+## <a href="#Commands" name="Commands">Commands</a>
+PCFW gives you the ability to add commands.
+
+Function | Description | Returns
+--- | --- | ---
+`PCFW.commands.add([command],[callback])` | Add a command that will call _callback_ | `true`/`false`
+`PCFW.commands.remove([command])` | Remove a command | `true`/`false`
+
 ## <a href="#Events" name="Events">Events</a>
 Plug.dj Coding FrameWork contains an event manager, `PCFW.events`, that extends the original plug.dj API event system.<br />
-All API events will also be emitted by PCFW.
+All API events will also be emitted by PCFW, simply replace `API.addEventListener` and `API.removeEventListener` with `PCFW.events.on` and `PCFW.events.off`.
 
 Function | Description | Returns
 --- | --- | ---
