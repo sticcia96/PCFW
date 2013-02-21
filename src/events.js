@@ -1,12 +1,29 @@
 _PCFW.events = {
+    CHAT:              "chat",
+    CURATE_UPDATE:     "curateUpdate",
+    DJ_ADVANCE:        "djAdvance",
+    DJ_UPDATE:         "djUpdate",
+    FAN_JOIN:          "fanJoin",
+    FRIEND_JOIN:       "friendJoin",
+    MOD_SKIP:          "modSkip",
+    ROOM_SCORE_UPDATE: "roomScoreUpdate",
+    USER_FAN:          "userFan",
+    USER_JOIN:         "userJoin",
+    USER_LEAVE:        "userLeave",
+    USER_SKIP:         "userSkip",
+    VOTE_SKIP:         "voteSkip",
+    VOTE_UPDATE:       "voteUpdate",
+    WAIT_LIST_UPDATE:  "waitListUpdate",
     __events: {},
     __prioritySort: function(a,b) { return a.priority > b.priority ? 1 : a.priority < b.priority ? -1 : 0; },
     priority: {
         HIGHEST: 0,
-        HIGH: 1,
-        NORMAL: 2,
-        LOW: 3,
-        LOWEST: 4
+        HIGH:    1,
+        NORMAL:  2,
+        LOW:     3,
+        LOWEST:  4,
+        SYSTEM:  5,
+        MONITOR: 6
     },
     on: function(type,callback,priority) {
         if (type === undefined || callback === undefined) return false;
