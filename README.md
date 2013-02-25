@@ -1,6 +1,9 @@
 PCFW
 ====
 
+## Status
+The code isn't ready for use yet, please wait until v.1.0.0 is out!
+
 ## What is Plug.dj Coding FrameWork?
 PCFW is a framework that can be used to easily write powerful and featureful scripts for the music sharing website <a href="http://plug.dj">plug.dj</a>
 
