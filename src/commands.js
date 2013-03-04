@@ -12,4 +12,4 @@ _PCFW.commands = {
         if (command === undefined) return false;
         return this.__commands[command.toString()] !== undefined;
     }
-}
+};

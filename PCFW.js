@@ -1,3 +1,43 @@
+//Generated at 04-03-2013 02:08:35
+var _PCFW = Class.extend({
+    __original: {},
+    version: {
+        major: 0,
+        minor: 1,
+        patch: 1
+    },
+    getVersion: function() {
+        return this.version.major + '.' + this.version.minor + '.' + this.version.patch;
+    },
+    init: function() {
+        this.__original.chatCommand = Models.chat.chatCommand;
+        this.__original.delayDispatch = API.delayDispatch;
+        API.delayDispatch = function(a,b) {
+            this.isReady && this.__events[a] && PCFW.events.emit(a,b), setTimeout(function(){API.dispatchEvent(a,b);a=b=null},1E3);
+        };
+
+        log('PCFW version ' + this.getVersion() + ' initialized');
+    },
+    kill: function() {
+        Models.chat.chatCommand = PCFW.__original.chatCommand;
+        API.delayDispatch = PCFW.__original.delayDispatch;
+    }
+});
+_PCFW.commands = {
+    __commands: {},
+    add: function(command,callback) {
+        if (command === undefined || command.toString().length < 1 || callback === undefined || this.__commands[command.toString()] !== undefined) return false;
+        return this.__commands[command.toString()] = callback,true;
+    },
+    remove: function(command) {
+        if (command === undefined || this.__commands[command.toString()] === undefined) return false;
+        return delete this.__commands[command.toString()],true;
+    },
+    isset: function(command) {
+        if (command === undefined) return false;
+        return this.__commands[command.toString()] !== undefined;
+    }
+};
 _PCFW.events = {
     CHAT:              "chat",
     CURATE_UPDATE:     "curateUpdate",
@@ -88,3 +128,4 @@ _PCFW.events = {
         return true;
     }
 };
+PCFW = new _PCFW();
