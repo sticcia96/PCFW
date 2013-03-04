@@ -2,8 +2,8 @@ var PCFW = {
     __original: {},
     version: {
         major: 0,
-        minor: 1,
-        patch: 2
+        minor: 2,
+        patch: 0
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
