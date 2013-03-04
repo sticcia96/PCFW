@@ -1,1 +1,1 @@
-PCFW = new _PCFW();
+PCFW.init();

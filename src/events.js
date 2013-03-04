@@ -1,4 +1,4 @@
-_PCFW.events = {
+PCFW.events = {
     CHAT:              "chat",
     CURATE_UPDATE:     "curateUpdate",
     DJ_ADVANCE:        "djAdvance",
@@ -27,43 +27,43 @@ _PCFW.events = {
     },
     on: function(type,callback,priority) {
         if (type === undefined || callback === undefined) return false;
-        if (this.__events[type] === undefined) this.__events[type] = [];
-        if (priority === undefined) priority = this.priority.NORMAL;
+        if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
+        if (priority === undefined) priority = PCFW.events.priority.NORMAL;
         else {
             var a = false;
-            for (var b in this.priority) {
-                if (this.priority[b] === priority)
+            for (var b in PCFW.events.priority) {
+                if (PCFW.events.priority[b] === priority)
                     a = true;
             }
-            if (!a) priority = this.priority.NORMAL;
+            if (!a) priority = PCFW.events.priority.NORMAL;
         }
-        this.__events[type].push({
+        PCFW.events.__events[type].push({
             callback: callback,
             once:     false,
             priority: priority
         });
-        this.__events[type].sort(this.prioritySort);
+        PCFW.events.__events[type].sort(PCFW.events.prioritySort);
         return true;
     },
     once: function(type,callback,priority) {
         if (type === undefined || callback === undefined) return false;
-        if (this.__events[type] === undefined) this.__events[type] = [];
-        if (priority === undefined) priority = this.priority.NORMAL;
-        this.__events[type].push({
+        if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
+        if (priority === undefined) priority = PCFW.events.priority.NORMAL;
+        PCFW.events.__events[type].push({
             callback: callback,
             once:     true,
             priority: priority
         });
-        this.__events[type].sort(this.prioritySort);
+        PCFW.events.__events[type].sort(PCFW.events.prioritySort);
         return true;
     },
     off: function(type,callback) {
         if (type === undefined || callback === undefined) return false;
-        if (this.__events[type] === undefined) return false;
+        if (PCFW.events.__events[type] === undefined) return false;
         var found = false;
-        for (var i in this.__events[type]) {
-            if (this.__events[type][i].callback === callback) {
-                this.__events[type].splice(i,1);
+        for (var i in PCFW.events.__events[type]) {
+            if (PCFW.events.__events[type][i].callback === callback) {
+                PCFW.events.__events[type].splice(i,1);
                 found = true;
             }
         }
@@ -71,18 +71,18 @@ _PCFW.events = {
     },
     emit: function(type,data) {
         if (type === undefined || data === undefined) return false;
-        if (this.__events[type] === undefined) return true;
-        for (var i in this.__events[type]) {
+        if (PCFW.events.__events[type] === undefined) return true;
+        for (var i in PCFW.events.__events[type]) {
             try {
-                if (this.__events[type][i] === undefined || this.__events[type][i].callback === undefined)
-                    this.__events[type].splice(i,1);
+                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined)
+                    PCFW.events.__events[type].splice(i,1);
                 else
-                    this.__events[type][i].callback(data);
+                    PCFW.events.__events[type][i].callback(data);
 
-                if (this.__events[type][i].once)
-                    this.__events[type].splice(i,1);
+                if (PCFW.events.__events[type][i].once)
+                    PCFW.events.__events[type].splice(i,1);
             } catch (e) {
-                console.error('emit',{error:e,type:type,data:data});
+                PCFW.console.error('emit',{error:e,type:type,data:data});
             }
         }
         return true;

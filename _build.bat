@@ -7,6 +7,8 @@ IF %HOUR% LSS 12 set HOUR=0%TIME:~1,1%
 echo //Generated at %DATE% %HOUR%:%TIME:~3,5%
 cat src/core.js
 echo.
+cat src/console.js
+echo.
 cat src/commands.js
 echo.
 cat src/events.js
