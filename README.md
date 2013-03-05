@@ -17,4 +17,6 @@ To test your changes, simply build it to get the PCFW.min.js file.
 
 ## How to build?
 If you are making any changings and want to test it, simply run _build.bat to make the PCFW.min.js file.<br />
-It's using [Google Closure Compiler](https://code.google.com/p/closure-compiler/) (included) to build.
+It's using [Closure Compiler](https://code.google.com/p/closure-compiler/) (included) to build.<br />
+If you make another file in the src folder, add it to the build file. (Please note that the list is in execution order)<br />
+``SET FILE_LIST=(core console commands events instance)``
