@@ -1,3 +1,4 @@
 [submodule "system/lib"]
-	path = system/lib
-	url = git://github.com/TATDK/plug.dj-lib.git
+    path = system/lib
+    url = git://github.com/TATDK/plug.dj-lib.git
+    ignore = dirty
