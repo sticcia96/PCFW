@@ -2,7 +2,7 @@ var PCFW = {
     __original: {},
     version: {
         major: 0,
-        minor: 2,
+        minor: 3,
         patch: 0
     },
     getVersion: function() {
@@ -10,19 +10,21 @@ var PCFW = {
     },
     init: function() {
         if (document.location.host !== 'plug.dj') return;
-        PCFW.__original.chatCommand = Models.chat.chatCommand;
-        PCFW.__original.delayDispatch = API.delayDispatch;
-        API.delayDispatch = function(a,b) {
-            if (!API.isReady) return;
-            PCFW.events.emit(a,b);
-            API.__events[a] && setTimeout(function(){API.dispatchEvent(a,b);a=b=null},1E3);
-        };
 
-        log('PCFW version ' + PCFW.getVersion() + ' initialized');
+        console.group('Plug.dj Coding FrameWork');
+
+        PCFW.override.init();
+        console.log('     _/_/_/      _/_/_/  _/_/_/_/  _/          _/ ');
+        console.log('    _/    _/  _/        _/        _/          _/  ');
+        console.log('   _/_/_/    _/        _/_/_/    _/    _/    _/   ');
+        console.log('  _/        _/        _/          _/  _/  _/      ');
+        console.log(' _/          _/_/_/  _/            _/  _/         ');
+        PCFW.console.log('Version ' + PCFW.getVersion() + ' initialized');
+
+        console.groupEnd();
     },
     kill: function() {
-        Models.chat.chatCommand = PCFW.__original.chatCommand;
-        API.delayDispatch = PCFW.__original.delayDispatch;
+        PCFW.override.kill();
     },
     loadScript: function(script) {
         if (typeof script === 'string') {

@@ -1,9 +1,9 @@
-//Generated at 04-03-2013 13:21:04
+//Generated at 07-03-2013 09:57:57 
 var PCFW = {
     __original: {},
     version: {
         major: 0,
-        minor: 2,
+        minor: 3,
         patch: 0
     },
     getVersion: function() {
@@ -11,19 +11,21 @@ var PCFW = {
     },
     init: function() {
         if (document.location.host !== 'plug.dj') return;
-        PCFW.__original.chatCommand = Models.chat.chatCommand;
-        PCFW.__original.delayDispatch = API.delayDispatch;
-        API.delayDispatch = function(a,b) {
-            if (!API.isReady) return;
-            PCFW.events.emit(a,b);
-            API.__events[a] && setTimeout(function(){API.dispatchEvent(a,b);a=b=null},1E3);
-        };
 
-        log('PCFW version ' + PCFW.getVersion() + ' initialized');
+        console.group('Plug.dj Coding FrameWork');
+
+        PCFW.override.init();
+        console.log('     _/_/_/      _/_/_/  _/_/_/_/  _/          _/ ');
+        console.log('    _/    _/  _/        _/        _/          _/  ');
+        console.log('   _/_/_/    _/        _/_/_/    _/    _/    _/   ');
+        console.log('  _/        _/        _/          _/  _/  _/      ');
+        console.log(' _/          _/_/_/  _/            _/  _/         ');
+        PCFW.console.log('Version ' + PCFW.getVersion() + ' initialized');
+
+        console.groupEnd();
     },
     kill: function() {
-        Models.chat.chatCommand = PCFW.__original.chatCommand;
-        API.delayDispatch = PCFW.__original.delayDispatch;
+        PCFW.override.kill();
     },
     loadScript: function(script) {
         if (typeof script === 'string') {
@@ -34,7 +36,7 @@ var PCFW = {
             //TODO: Load script from object ( http://pastebin.com/raw.php?i=39436vdE )
         }
     }
-};
+}; 
 PCFW.console = {
     log: function() {
         var msgs = ["[PCFW]"];
@@ -66,11 +68,12 @@ PCFW.console = {
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.assert.apply(console, msgs);
     }
-};
+}; 
 PCFW.commands = {
     __commands: {},
     add: function(command,callback) {
-        if (command === undefined || command.toString().length < 1 || callback === undefined || PCFW.commands.__commands[command.toString()] !== undefined) return false;
+        if (command !== undefined) command = command.toString();
+        if (command === undefined || command.length < 1 || command.indexOf(' ') > -1 || callback === undefined || PCFW.commands.isset(command) === true) return false;
         return PCFW.commands.__commands[command.toString()] = callback,true;
     },
     remove: function(command) {
@@ -80,8 +83,12 @@ PCFW.commands = {
     isset: function(command) {
         if (command === undefined) return false;
         return PCFW.commands.__commands[command.toString()] !== undefined;
+    },
+    execute: function(command,data) {
+        if (PCFW.commands.isset(command) === false) return false;
+        PCFW.commands.__commands[command.toString()](data);
     }
-};
+}; 
 PCFW.events = {
     CHAT:              "chat",
     CURATE_UPDATE:     "curateUpdate",
@@ -171,5 +178,58 @@ PCFW.events = {
         }
         return true;
     }
-};
+}; 
+PCFW.override = {
+    init: function() {
+        PCFW.override.chatModels();
+        PCFW.override.API();
+    },
+    kill: function() {
+        Models.chat.chatCommand             = PCFW.__original.chatCommand;
+        Models.chat.addEventListener        = PCFW.__original.chatAddEvent;
+        Models.chat.removeEventListener     = PCFW.__original.chatRemoveEvent;
+        Models.chat.dispatchEvent           = PCFW.__original.chatDispatch;
+        API.delayDispatch                   = PCFW.__original.delayDispatch;
+    },
+    chatModels: function() {
+        PCFW.__original.chatCommand         = Models.chat.chatCommand;
+        Models.chat.chatCommand             = function(msg) {
+                                                if (PCFW.__original.chatCommand(msg) === true)
+                                                    return true;
+                                                if (msg.length === 0 || msg.substring(0,1) !== '/') return false;
+                                                var args = msg.split(' ');
+                                                PCFW.commands.execute(args.splice(0,1)[0].substring(1),args);
+                                            };
+
+        PCFW.__original.chatAddEvent        = Models.chat.addEventListener;
+        Models.chat.addEventListener        = function (event,callback) {
+                                                PCFW.events.on(event,callback,PCFW.events.priority.SYSTEM);
+                                            };
+
+        PCFW.__original.chatRemoveEvent     = Models.chat.removeEventListener;
+        Models.chat.removeEventListener     = function (event,callback) {
+                                                PCFW.events.off(event,callback);
+                                            };
+
+        PCFW.__original.chatDispatch        = Models.chat.dispatchEvent;
+        Models.chat.dispatchEvent           = function (event,data) {
+                                                PCFW.events.emit(event,data);
+                                            };
+    },
+    API: function() {
+        PCFW.__original.delayDispatch       = API.delayDispatch;
+        API.delayDispatch                   = function(event,data) {
+                                                if (!API.isReady)
+                                                    return;
+                                                PCFW.events.emit(event,data);
+                                                if (API.__events[event]) {
+                                                    setTimeout(function() {
+                                                        API.dispatchEvent(event,data);
+                                                        event = null;
+                                                        data = null;
+                                                    }, 1000);
+                                                }
+                                            };
+    }
+}; 
 PCFW.init();
