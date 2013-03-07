@@ -73,6 +73,8 @@ PCFW.events = {
         if (type === undefined || data === undefined) return false;
         if (PCFW.events.__events[type] === undefined) return true;
         for (var i in PCFW.events.__events[type]) {
+            if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
+                return;
             try {
                 if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined)
                     PCFW.events.__events[type].splice(i,1);

@@ -1,10 +1,10 @@
-//Generated at 07-03-2013 09:57:57 
+//Generated at 07-03-2013 00:17:44 
 var PCFW = {
     __original: {},
     version: {
         major: 0,
         minor: 3,
-        patch: 0
+        patch: 1
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
@@ -164,6 +164,8 @@ PCFW.events = {
         if (type === undefined || data === undefined) return false;
         if (PCFW.events.__events[type] === undefined) return true;
         for (var i in PCFW.events.__events[type]) {
+            if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
+                return;
             try {
                 if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined)
                     PCFW.events.__events[type].splice(i,1);
@@ -193,6 +195,13 @@ PCFW.override = {
     },
     chatModels: function() {
         PCFW.__original.chatCommand         = Models.chat.chatCommand;
+
+        PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
+        PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
+        PCFW.events.on("chatReceived",      $.proxy(Chat.onChatReceived,Chat));
+        PCFW.events.on("chatClear",         $.proxy(Chat.onChatClear,Chat));
+        PCFW.events.on("timestampUpdate",   $.proxy(Chat.onTimestampUpdate,Chat));
+
         Models.chat.chatCommand             = function(msg) {
                                                 if (PCFW.__original.chatCommand(msg) === true)
                                                     return true;

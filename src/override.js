@@ -12,6 +12,13 @@ PCFW.override = {
     },
     chatModels: function() {
         PCFW.__original.chatCommand         = Models.chat.chatCommand;
+
+        PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
+        PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
+        PCFW.events.on("chatReceived",      $.proxy(Chat.onChatReceived,Chat));
+        PCFW.events.on("chatClear",         $.proxy(Chat.onChatClear,Chat));
+        PCFW.events.on("timestampUpdate",   $.proxy(Chat.onTimestampUpdate,Chat));
+
         Models.chat.chatCommand             = function(msg) {
                                                 if (PCFW.__original.chatCommand(msg) === true)
                                                     return true;
