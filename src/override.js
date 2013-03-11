@@ -39,6 +39,21 @@ PCFW.override = {
             Models.chat.dispatchEvent           = PCFW.__original.chatDispatch;
         }
     },
+    chat: {
+        init: function() {
+            PCFW.__original.SocketListenerChat  = SocketListener.chat;
+            SocketListener.chat                 = function(data) {
+                                                    Models.chat.receive(data);
+                                                    data.mention = false;
+                                                    if (-1 < $("<span/>").html(data.message).text().indexOf("@" + Models.user.data.username) + " ")
+                                                        data.mention = true;
+                                                    API.delayDispatch(API.CHAT,data);
+                                                }
+        },
+        kill: function() {
+            SocketListener.chat                 = PCFW.__original.SocketListenerChat;
+        }
+    }
     API: {
         init: function() {
             PCFW.__original.delayDispatch       = API.delayDispatch;
