@@ -1,0 +1,19 @@
+{
+    "name": "PCFW",
+    "title": "Plug.dj Coding FrameWork",
+    "description": "Coding framework for the social music sharing website plug.dj",
+    "version": "0.4.1",
+    "author": {
+        "name": "TATDK",
+        "url": "https://github.com/TATDK/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TATDK/PCFW.git"
+    },
+    "dependencies": {
+        "grunt": "0.4.1",
+        "testswarm": "0.2.2"
+    },
+    "keywords": []
+}
