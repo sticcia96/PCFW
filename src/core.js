@@ -1,9 +1,14 @@
+function NotImplementedError(message) {
+    this.name = "NotImplementedError";
+    this.message = (message || "");
+}
+NotImplementedError.prototype = Error.prototype;
 var PCFW = {
     __original: {},
     version: {
         major: 0,
-        minor: 3,
-        patch: 1
+        minor: 4,
+        patch: 0
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
