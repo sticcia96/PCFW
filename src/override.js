@@ -9,7 +9,7 @@ PCFW.override = {
         var objects = Object.keys(PCFW.override);
         objects.splice(0,2);
         for (var i in objects)
-            PCFW.override[objects[i]]..kill();
+            PCFW.override[objects[i]].kill();
     },
     chatModels: {
         init: function() {
@@ -48,12 +48,12 @@ PCFW.override = {
                                                     if (-1 < $("<span/>").html(data.message).text().indexOf("@" + Models.user.data.username) + " ")
                                                         data.mention = true;
                                                     API.delayDispatch(API.CHAT,data);
-                                                }
+                                                };
         },
         kill: function() {
             SocketListener.chat                 = PCFW.__original.SocketListenerChat;
         }
-    }
+    },
     API: {
         init: function() {
             PCFW.__original.delayDispatch       = API.delayDispatch;

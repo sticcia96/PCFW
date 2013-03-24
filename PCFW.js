@@ -1,9 +1,17 @@
-//Generated at 07-03-2013 00:17:44 
+//Generated at 25-03-2013 00:33:03 
+/**
+ * @this {NotImplementedError}
+ */
+function NotImplementedError(message) {
+    this.name = "NotImplementedError";
+    this.message = (message || "");
+}
+NotImplementedError.prototype = Error.prototype;
 var PCFW = {
     __original: {},
     version: {
         major: 0,
-        minor: 3,
+        minor: 4,
         patch: 1
     },
     getVersion: function() {
@@ -38,33 +46,36 @@ var PCFW = {
     }
 }; 
 PCFW.console = {
+    defaultMessage: function() {
+        return ["[PCFW]"];
+    },
     log: function() {
-        var msgs = ["[PCFW]"];
+        var msgs = PCFW.console.defaultMessage();
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.log.apply(console, msgs);
     },
     error: function() {
-        var msgs = ["[PCFW]"];
+        var msgs = PCFW.console.defaultMessage();
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.error.apply(console, msgs);
     },
     trace: function() {
-        var msgs = ["[PCFW]"];
+        var msgs = PCFW.console.defaultMessage();
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.trace.apply(console, msgs);
     },
     info: function() {
-        var msgs = ["[PCFW]"];
+        var msgs = PCFW.console.defaultMessage();
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.info.apply(console, msgs);
     },
     warn: function() {
-        var msgs = ["[PCFW]"];
+        var msgs = PCFW.console.defaultMessage();
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.warn.apply(console, msgs);
     },
     assert: function() {
-        var msgs = ["[PCFW]"];
+        var msgs = PCFW.console.defaultMessage();
         while (arguments.length) msgs.push([].shift.call(arguments));
         console.assert.apply(console, msgs);
     }
@@ -183,62 +194,79 @@ PCFW.events = {
 }; 
 PCFW.override = {
     init: function() {
-        PCFW.override.chatModels();
-        PCFW.override.API();
+        var objects = Object.keys(PCFW.override);
+        objects.splice(0,2);
+        for (var i in objects)
+            PCFW.override[objects[i]].init();
     },
     kill: function() {
-        Models.chat.chatCommand             = PCFW.__original.chatCommand;
-        Models.chat.addEventListener        = PCFW.__original.chatAddEvent;
-        Models.chat.removeEventListener     = PCFW.__original.chatRemoveEvent;
-        Models.chat.dispatchEvent           = PCFW.__original.chatDispatch;
-        API.delayDispatch                   = PCFW.__original.delayDispatch;
+        var objects = Object.keys(PCFW.override);
+        objects.splice(0,2);
+        for (var i in objects)
+            PCFW.override[objects[i]].kill();
     },
-    chatModels: function() {
-        PCFW.__original.chatCommand         = Models.chat.chatCommand;
+    chatModels: {
+        init: function() {
+            PCFW.__original.chatCommand         = Models.chat.chatCommand;
 
-        PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
-        PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
-        PCFW.events.on("chatReceived",      $.proxy(Chat.onChatReceived,Chat));
-        PCFW.events.on("chatClear",         $.proxy(Chat.onChatClear,Chat));
-        PCFW.events.on("timestampUpdate",   $.proxy(Chat.onTimestampUpdate,Chat));
+            PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
+            PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
+            PCFW.events.on("chatReceived",      $.proxy(Chat.onChatReceived,Chat));
+            PCFW.events.on("chatClear",         $.proxy(Chat.onChatClear,Chat));
+            PCFW.events.on("timestampUpdate",   $.proxy(Chat.onTimestampUpdate,Chat));
 
-        Models.chat.chatCommand             = function(msg) {
-                                                if (PCFW.__original.chatCommand(msg) === true)
-                                                    return true;
-                                                if (msg.length === 0 || msg.substring(0,1) !== '/') return false;
-                                                var args = msg.split(' ');
-                                                PCFW.commands.execute(args.splice(0,1)[0].substring(1),args);
-                                            };
+            Models.chat.chatCommand             = function(msg) {
+                                                    if (PCFW.__original.chatCommand(msg) === true)
+                                                        return true;
+                                                    if (msg.length === 0 || msg.substring(0,1) !== '/') return false;
+                                                    var args = msg.split(' ');
+                                                    PCFW.commands.execute(args.splice(0,1)[0].substring(1),args);
+                                                };
 
-        PCFW.__original.chatAddEvent        = Models.chat.addEventListener;
-        Models.chat.addEventListener        = function (event,callback) {
-                                                PCFW.events.on(event,callback,PCFW.events.priority.SYSTEM);
-                                            };
-
-        PCFW.__original.chatRemoveEvent     = Models.chat.removeEventListener;
-        Models.chat.removeEventListener     = function (event,callback) {
-                                                PCFW.events.off(event,callback);
-                                            };
-
-        PCFW.__original.chatDispatch        = Models.chat.dispatchEvent;
-        Models.chat.dispatchEvent           = function (event,data) {
-                                                PCFW.events.emit(event,data);
-                                            };
+            PCFW.__original.chatDispatch        = Models.chat.dispatchEvent;
+            Models.chat.dispatchEvent           = function (event,data) {
+                                                    PCFW.events.emit(event,data);
+                                                };
+        },
+        kill: function() {
+            Models.chat.chatCommand             = PCFW.__original.chatCommand;
+            Models.chat.dispatchEvent           = PCFW.__original.chatDispatch;
+        }
     },
-    API: function() {
-        PCFW.__original.delayDispatch       = API.delayDispatch;
-        API.delayDispatch                   = function(event,data) {
-                                                if (!API.isReady)
-                                                    return;
-                                                PCFW.events.emit(event,data);
-                                                if (API.__events[event]) {
-                                                    setTimeout(function() {
-                                                        API.dispatchEvent(event,data);
-                                                        event = null;
-                                                        data = null;
-                                                    }, 1000);
-                                                }
-                                            };
+    chat: {
+        init: function() {
+            PCFW.__original.SocketListenerChat  = SocketListener.chat;
+            SocketListener.chat                 = function(data) {
+                                                    Models.chat.receive(data);
+                                                    data.mention = false;
+                                                    if (-1 < $("<span/>").html(data.message).text().indexOf("@" + Models.user.data.username) + " ")
+                                                        data.mention = true;
+                                                    API.delayDispatch(API.CHAT,data);
+                                                };
+        },
+        kill: function() {
+            SocketListener.chat                 = PCFW.__original.SocketListenerChat;
+        }
+    },
+    API: {
+        init: function() {
+            PCFW.__original.delayDispatch       = API.delayDispatch;
+            API.delayDispatch                   = function(event,data) {
+                                                    if (!API.isReady)
+                                                        return;
+                                                    PCFW.events.emit(event,data);
+                                                    if (API.__events[event]) {
+                                                        setTimeout(function() {
+                                                            API.dispatchEvent(event,data);
+                                                            event = null;
+                                                            data = null;
+                                                        }, 1000);
+                                                    }
+                                                };
+        },
+        kill: function() {
+            API.delayDispatch                   = PCFW.__original.delayDispatch;
+        }
     }
 }; 
 PCFW.init();

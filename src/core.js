@@ -1,3 +1,6 @@
+/**
+ * @this {NotImplementedError}
+ */
 function NotImplementedError(message) {
     this.name = "NotImplementedError";
     this.message = (message || "");
@@ -8,7 +11,7 @@ var PCFW = {
     version: {
         major: 0,
         minor: 4,
-        patch: 0
+        patch: 1
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
