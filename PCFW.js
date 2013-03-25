@@ -1,4 +1,4 @@
-//Generated at 25-03-2013 02:43:51 
+//Generated at 25-03-2013 13:13:37 
 /**
  * @this {NotImplementedError}
  */
@@ -12,7 +12,7 @@ var PCFW = {
     version: {
         major: 0,
         minor: 4,
-        patch: 3
+        patch: 4
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
