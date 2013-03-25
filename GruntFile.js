@@ -1,11 +1,11 @@
-module.exports = function( grunt ) {
+module.exports = function(grunt) {
 
     "use strict";
 
-    var readOptionalJSON = function( filepath ) {
+    var readOptionalJSON = function(filepath) {
             var data = {};
             try {
-                data = grunt.file.readJSON( filepath );
+                data = grunt.file.readJSON(filepath);
             } catch(e) {}
             return data;
         };
@@ -18,13 +18,14 @@ module.exports = function( grunt ) {
         },
     });
 
-    grunt.registerTask("testswarm", function( commit, configFile ) {
+    grunt.registerTask("testswarm", function(commit,configFile) {
         var jobName,
             testswarm = require("testswarm"),
             testUrls = [],
             pull = /PR-(\d+)/.exec(commit),
             config = grunt.file.readJSON(configFile),
-            tests = grunt.config([ this.name, "tests" ]);
+            tests = grunt.config([this.name,"tests"]),
+            testNames = tests;
 
         if ( pull ) {
             jobName = "PCFW pull <a href='https://github.com/TATDK/PCFW/pull/" +
@@ -34,8 +35,12 @@ module.exports = function( grunt ) {
                 commit + "'>" + commit.substr( 0, 10 ) + "</a>";
         }
 
-        tests.forEach(function( test ) {
-            testUrls.push( config.testUrl + commit + "/test/index.html?module=" + test );
+        tests.forEach(function(test) {
+            testUrls.push(config.testUrl + commit + "/test/index.html?module=" + test);
+        });
+        tests.forEach(function(test) {
+            testNames.push(test+" min");
+            testUrls.push(config.testUrl + commit + "/test/index.min.html?module=" + test);
         });
 
         testswarm({
@@ -48,12 +53,12 @@ module.exports = function( grunt ) {
             authToken: config.authToken,
             jobName: jobName,
             runMax: config.runMax,
-            "runNames[]": tests,
+            "runNames[]": testNames,
             "runUrls[]": testUrls,
             "browserSets[]": "PCFW"
         });
     });
 
     // Default grunt
-    grunt.registerTask( "default", [] );
+    grunt.registerTask("default",[]);
 };
