@@ -1,4 +1,4 @@
-//Generated at 25-03-2013 00:33:03 
+//Generated at 25-03-2013 01:45:25 
 /**
  * @this {NotImplementedError}
  */
@@ -12,7 +12,7 @@ var PCFW = {
     version: {
         major: 0,
         minor: 4,
-        patch: 1
+        patch: 2
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
@@ -128,7 +128,7 @@ PCFW.events = {
         MONITOR: 6
     },
     on: function(type,callback,priority) {
-        if (type === undefined || callback === undefined) return false;
+        if (type === undefined || type === null || callback === undefined || callback === null) return false;
         if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
         if (priority === undefined) priority = PCFW.events.priority.NORMAL;
         else {
@@ -148,7 +148,7 @@ PCFW.events = {
         return true;
     },
     once: function(type,callback,priority) {
-        if (type === undefined || callback === undefined) return false;
+        if (type === undefined || type === null || callback === undefined || callback === null) return false;
         if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
         if (priority === undefined) priority = PCFW.events.priority.NORMAL;
         PCFW.events.__events[type].push({
@@ -160,7 +160,7 @@ PCFW.events = {
         return true;
     },
     off: function(type,callback) {
-        if (type === undefined || callback === undefined) return false;
+        if (type === undefined || type === null || callback === undefined || callback === null) return false;
         if (PCFW.events.__events[type] === undefined) return false;
         var found = false;
         for (var i in PCFW.events.__events[type]) {
@@ -172,7 +172,7 @@ PCFW.events = {
         return found;
     },
     emit: function(type,data) {
-        if (type === undefined || data === undefined) return false;
+        if (type === undefined || type === null || data === undefined || data === null) return false;
         if (PCFW.events.__events[type] === undefined) return true;
         for (var i in PCFW.events.__events[type]) {
             if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
