@@ -22,11 +22,12 @@ var PCFW = {
         console.group('Plug.dj Coding FrameWork');
 
         PCFW.override.init();
-        console.log('     _/_/_/      _/_/_/  _/_/_/_/  _/          _/ ');
-        console.log('    _/    _/  _/        _/        _/          _/  ');
-        console.log('   _/_/_/    _/        _/_/_/    _/    _/    _/   ');
-        console.log('  _/        _/        _/          _/  _/  _/      ');
-        console.log(' _/          _/_/_/  _/            _/  _/         ');
+        console.log('\
+     _/_/_/      _/_/_/  _/_/_/_/  _/          _/\n\
+    _/    _/  _/        _/        _/          _/ \n\
+   _/_/_/    _/        _/_/_/    _/    _/    _/  \n\
+  _/        _/        _/          _/  _/  _/     \n\
+ _/          _/_/_/  _/            _/  _/        ');
         PCFW.console.log('Version ' + PCFW.getVersion() + ' initialized');
 
         console.groupEnd();

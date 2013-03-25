@@ -1,4 +1,4 @@
-//Generated at 25-03-2013 13:13:37 
+//Generated at 25-03-2013 17:59:38 
 /**
  * @this {NotImplementedError}
  */
@@ -23,11 +23,12 @@ var PCFW = {
         console.group('Plug.dj Coding FrameWork');
 
         PCFW.override.init();
-        console.log('     _/_/_/      _/_/_/  _/_/_/_/  _/          _/ ');
-        console.log('    _/    _/  _/        _/        _/          _/  ');
-        console.log('   _/_/_/    _/        _/_/_/    _/    _/    _/   ');
-        console.log('  _/        _/        _/          _/  _/  _/      ');
-        console.log(' _/          _/_/_/  _/            _/  _/         ');
+        console.log('\
+     _/_/_/      _/_/_/  _/_/_/_/  _/          _/\n\
+    _/    _/  _/        _/        _/          _/ \n\
+   _/_/_/    _/        _/_/_/    _/    _/    _/  \n\
+  _/        _/        _/          _/  _/  _/     \n\
+ _/          _/_/_/  _/            _/  _/        ');
         PCFW.console.log('Version ' + PCFW.getVersion() + ' initialized');
 
         console.groupEnd();
