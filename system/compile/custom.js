@@ -1,4 +1,5 @@
-var PCFW  = {
+var PCFW = {
+    version: {major:0,minor:0,patch:0},
     getVersion: function() {},
     init: function() {},
     kill: function() {},
