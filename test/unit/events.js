@@ -1,13 +1,5 @@
 module("events");
 
-test("event object empty",function() {
-    for (var i in PCFW.events.__events) {
-        ok(false,"empty event object");
-        return;
-    }
-    ok(true,"empty event object");
-});
-
 test("add/remove event",function() {
     var callback = function(){};
     strictEqual(PCFW.events.on(),false,"check for no parameters when adding");
