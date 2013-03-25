@@ -14,7 +14,19 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON("package.json"),
         dst: readOptionalJSON("dist/.destination.json"),
         testswarm: {
-            tests: (function() { return require('fs').readdirSync('./test/unit/'); })()
+            tests: (function() {
+                var path = require('path'),
+                    files = require('fs').readdirSync('./test/unit/'),
+                    testFiles = [];
+                files.forEach(function(file) {
+                    var basename = path.basename(file),
+                        extname = path.extname(file);
+                    //Only .js files
+                    if (extname === '.js')
+                        testFiles.push(basename.substr(0,basename.length - extname.length))
+                });
+                return testFiles;
+            })()
         },
     });
 
