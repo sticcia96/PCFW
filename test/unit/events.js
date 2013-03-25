@@ -1,17 +1,11 @@
 module("events");
 
 test("event object empty",function() {
-    function is_empty(obj) {
-        var hasOwnProperty = Object.prototype.hasOwnProperty;
-        if (obj === null || obj === undefined) return true;
-        if (obj.length && obj.length > 0) return false;
-        if (obj.length === 0)  return true;
-        for (var key in obj) {
-            if (hasOwnProperty.call(obj, key)) return false;
-        }
-        return true;
+    for (var i in PCFW.events.__events) {
+        ok(false,"empty event object");
+        return;
     }
-    strictEqual(is_empty(PCFW.events.__events),true,"empty event object");
+    ok(true,"empty event object");
 });
 
 test("add/remove event",function() {
