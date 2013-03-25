@@ -1,8 +1,10 @@
 module("events");
-
-var callback = function(data) {
-    strictEqual(data.test,true,"emit received");
-};
+var i = 0,
+    callback = function(data) {
+        i++;
+        strictEqual(i,1,"order: first callback");
+        strictEqual(data.test,true,"event data received");
+    };
 
 test("add/remove event",function() {
     strictEqual(PCFW.events.on(),false,"check for no parameters when adding");
@@ -12,8 +14,10 @@ test("add/remove event",function() {
 });
 
 test("emit event",function() {
-    expect(2);
+    expect(4);
     PCFW.events.on("test",callback);
-    strictEqual(PCFW.events.emit("test",{test:true}),"emit of event");
+    strictEqual(PCFW.events.emit("test",{test:true}),true,"emit of event");
+    i++;
+    strictEqual(i,2,"order: then everything after emit");
     PCFW.events.off("test",callback);
 });
