@@ -14,6 +14,11 @@ PCFW.override = {
     chatModels: {
         init: function() {
             PCFW.__original.chatCommand         = Models.chat.chatCommand;
+            PCFW.__original.chatCommandProxy    = $.proxy(PCFW.__original.chatCommand,Models.chat);
+
+
+            PCFW.__original.chatReceiveProxy    = $.proxy(Models.chat.receive,Models.chat);
+            PCFW.events.on(PCFW.events.CHAT,PCFW.__original.chatReceiveProxy,PCFW.events.priority.SYSTEM);
 
             PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
             PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
@@ -22,7 +27,7 @@ PCFW.override = {
             PCFW.events.on("timestampUpdate",   $.proxy(Chat.onTimestampUpdate,Chat));
 
             Models.chat.chatCommand             = function(msg) {
-                                                    if (PCFW.__original.chatCommand(msg) === true)
+                                                    if (PCFW.__original.chatCommandProxy(msg) === true)
                                                         return true;
                                                     if (msg.length === 0 || msg.substring(0,1) !== '/') return false;
                                                     var args = msg.split(' ');
@@ -30,8 +35,8 @@ PCFW.override = {
                                                 };
 
             PCFW.__original.chatDispatch        = Models.chat.dispatchEvent;
-            Models.chat.dispatchEvent           = function (event,data) {
-                                                    PCFW.events.emit(event,data);
+            Models.chat.dispatchEvent           = function (type,data) {
+                                                    PCFW.events.emit(type,data);
                                                 };
         },
         kill: function() {
@@ -39,12 +44,12 @@ PCFW.override = {
             Models.chat.dispatchEvent           = PCFW.__original.chatDispatch;
         }
     },
-    chat: {
+    socketListener: {
         init: function() {
             PCFW.__original.SocketListenerChat  = SocketListener.chat;
             SocketListener.chat                 = function(data) {
-                                                    Models.chat.receive(data);
                                                     data.mention = false;
+                                                    data.cancelled = false;
                                                     if (-1 < $("<span/>").html(data.message).text().indexOf("@" + Models.user.data.username) + " ")
                                                         data.mention = true;
                                                     API.delayDispatch(API.CHAT,data);

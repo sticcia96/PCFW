@@ -6,12 +6,15 @@ function NotImplementedError(message) {
     this.message = (message || "");
 }
 NotImplementedError.prototype = Error.prototype;
+
+if (typeof PCFW !== "undefined") PCFW.kill();
+
 var PCFW = {
     __original: {},
     version: {
         major: 0,
         minor: 4,
-        patch: 6
+        patch: 7
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
