@@ -8,31 +8,27 @@ test("add/remove event",function() {
     strictEqual(PCFW.events.off("test",callback),true,"true on removed event");
 });
 
-test("emit event",function() {
-    var i = 0,
-        callback = function(data) {
-            i++;
-            strictEqual(i,1,"order: first callback");
+test("emit event",function(assert) {
+    var callback = function(data) {
+            assert.step(1);
             strictEqual(data.test,true,"event data received");
         };
     expect(4);
     PCFW.events.on("test",callback);
     strictEqual(PCFW.events.emit("test",{test:true}),true,"emit of event");
-    i++;
-    strictEqual(i,2,"order: then everything after emit");
+    assert.step(2);
     PCFW.events.off("test",callback);
 });
 
-test("emit priority",function() {
+test("emit priority",function(assert) {
     expect(7);
-    var i = 0,
-        callbackHighest = function() { equal(i,PCFW.events.priority.HIGHEST); i++; },
-        callbackMonitor = function() { equal(i,PCFW.events.priority.MONITOR); i++; },
-        callbackNormal  = function() { equal(i,PCFW.events.priority.NORMAL);  i++; },
-        callbackLowest  = function() { equal(i,PCFW.events.priority.LOWEST);  i++; },
-        callbackSystem  = function() { equal(i,PCFW.events.priority.SYSTEM);  i++; },
-        callbackHigh    = function() { equal(i,PCFW.events.priority.HIGH);    i++; },
-        callbackLow     = function() { equal(i,PCFW.events.priority.LOW);     i++; };
+    var callbackHighest = function() { assert.step(PCFW.events.priority.HIGHEST+1); },
+        callbackMonitor = function() { assert.step(PCFW.events.priority.MONITOR+1); },
+        callbackNormal  = function() { assert.step(PCFW.events.priority.NORMAL+1);  },
+        callbackLowest  = function() { assert.step(PCFW.events.priority.LOWEST+1);  },
+        callbackSystem  = function() { assert.step(PCFW.events.priority.SYSTEM+1);  },
+        callbackHigh    = function() { assert.step(PCFW.events.priority.HIGH+1);    },
+        callbackLow     = function() { assert.step(PCFW.events.priority.LOW+1);     };
     PCFW.events.on("test",callbackHighest,PCFW.events.priority.HIGHEST);
     PCFW.events.on("test",callbackMonitor,PCFW.events.priority.MONITOR);
     PCFW.events.on("test",callbackNormal ,PCFW.events.priority.NORMAL);
