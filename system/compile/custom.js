@@ -1,5 +1,9 @@
 var PCFW = {
-    version: {major:0,minor:0,patch:0},
+    version: {
+        major: 0,
+        minor: 0,
+        patch: 0
+    },
     getVersion: function() {},
     init: function() {},
     kill: function() {},
@@ -25,16 +29,31 @@ var PCFW = {
         VOTE_SKIP:         "",
         VOTE_UPDATE:       "",
         WAIT_LIST_UPDATE:  "",
-        on: function(a,b,c) {},
-        once: function(a,b,c) {},
-        off: function(a,b) {},
-        emit: function(a,b) {},
+        on: function() {},
+        once: function() {},
+        off: function() {},
+        emit: function() {},
         priority: {
             HIGHEST: 0,
-            HIGH: 1,
-            NORMAL: 2,
-            LOW: 3,
-            LOWEST: 4
+            HIGH: 0,
+            NORMAL: 0,
+            LOW: 0,
+            LOWEST: 0,
+            SYSTEM: 0,
+            MONITOR: 0
         }
+    },
+    gui: {
+        __GUI: {
+            init: function() {},
+            data: function() {},
+            width: function() {},
+            height: function() {},
+            textfield: function() {},
+            toggle: function() {},
+            checkbox: function() {},
+            button: function() {}
+        },
+        new: function() {}
     }
 };

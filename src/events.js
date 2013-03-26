@@ -42,7 +42,7 @@ PCFW.events = {
             once:     false,
             priority: priority
         });
-        PCFW.events.__events[type].sort(PCFW.events.prioritySort);
+        PCFW.events.__events[type].sort(PCFW.events.__prioritySort);
         return true;
     },
     once: function(type,callback,priority) {
@@ -54,7 +54,7 @@ PCFW.events = {
             once:     true,
             priority: priority
         });
-        PCFW.events.__events[type].sort(PCFW.events.prioritySort);
+        PCFW.events.__events[type].sort(PCFW.events.__prioritySort);
         return true;
     },
     off: function(type,callback) {
