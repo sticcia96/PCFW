@@ -1,4 +1,4 @@
-//Generated at 27-03-2013 00:00:49 
+//Generated at 28-03-2013 00:14:34 
 /**
  * @this {NotImplementedError}
  */
@@ -14,8 +14,8 @@ var PCFW = {
     __original: {},
     version: {
         major: 0,
-        minor: 4,
-        patch: 7
+        minor: 5,
+        patch: 0
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
@@ -253,8 +253,70 @@ PCFW.GUI = {
     new: function() {
         return new PCFW.GUI.__GUI();
     }
-};
- 
+}; 
+PCFW.room = {
+    images: {
+        woot: {
+            normal: function(url) {
+                if (url === undefined) return Lang.ui.buttonVotePositive;
+                Lang.ui.buttonVotePositive = url;
+            },
+            disabled: function(url) {
+                if (url === undefined) return Lang.ui.buttonVotePositiveDisabled;
+                Lang.ui.buttonVotePositiveDisabled = url;
+            },
+            selected: function(url) {
+                if (url === undefined) return Lang.ui.buttonVotePositiveSelected;
+                Lang.ui.buttonVotePositiveSelected = url;
+            },
+            popout: {
+                normal: function(url) {
+                    if (url === undefined) return Lang.ui.buttonVotePositivePopout;
+                    Lang.ui.buttonVotePositivePopout = url;
+                },
+                disabled: function(url) {
+                    if (url === undefined) return Lang.ui.buttonVotePositiveDisabledPopout;
+                    Lang.ui.buttonVotePositiveDisabledPopout = url;
+                },
+                selected: function(url) {
+                    if (url === undefined) return Lang.ui.buttonVotePositiveSelectedPopout;
+                    Lang.ui.buttonVotePositiveSelectedPopout = url;
+                }
+            }
+        },
+        meh: {
+            normal: function(url) {
+                if (url === undefined) return Lang.ui.buttonVoteNegative;
+                Lang.ui.buttonVoteNegative = url;
+            },
+            disabled: function(url) {
+                if (url === undefined) return Lang.ui.buttonVoteNegativeDisabled;
+                Lang.ui.buttonVoteNegativeDisabled = url;
+            },
+            selected: function(url) {
+                if (url === undefined) return Lang.ui.buttonVoteNegativeSelected;
+                Lang.ui.buttonVoteNegativeSelected = url;
+            },
+            popout: {
+                normal: function(url) {
+                    if (url === undefined) return Lang.ui.buttonVoteNegativePopout;
+                    Lang.ui.buttonVoteNegativePopout = url;
+                },
+                disabled: function(url) {
+                    if (url === undefined) return Lang.ui.buttonVoteNegativeDisabledPopout;
+                    Lang.ui.buttonVoteNegativeDisabledPopout = url;
+                },
+                selected: function(url) {
+                    if (url === undefined) return Lang.ui.buttonVoteNegativeSelectedPopout;
+                    Lang.ui.buttonVoteNegativeSelectedPopout = url;
+                }
+            }
+        }
+    },
+    text: {
+
+    }
+}; 
 PCFW.override = {
     init: function() {
         var objects = Object.keys(PCFW.override);

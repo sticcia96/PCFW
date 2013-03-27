@@ -1,7 +1,7 @@
 @ECHO OFF
 
 :: Files in /src in the order of execution
-SET FILE_LIST=(core console commands events gui override instance)
+SET FILE_LIST=(core console commands events gui room override instance)
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 SET PROGRESS=0

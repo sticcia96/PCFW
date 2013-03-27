@@ -55,5 +55,30 @@ var PCFW = {
             button: function() {}
         },
         new: function() {}
+    },
+    room: {
+        images: {
+            woot: {
+                normal: function() {},
+                disabled: function() {},
+                selected: function() {},
+                popout: {
+                    normal: function() {},
+                    disabled: function() {},
+                    selected: function() {}
+                }
+            },
+            meh: {
+                normal: function() {},
+                disabled: function() {},
+                selected: function() {},
+                popout: {
+                    normal: function() {},
+                    disabled: function() {},
+                    selected: function() {}
+                }
+            }
+        },
+        text: {}
     }
 };
