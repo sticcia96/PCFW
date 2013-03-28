@@ -34,7 +34,7 @@ SET PROGRESS=3
 SET RETURN=STEP4
 GOTO SHOWPROGRESS
 :STEP4
-java -jar system/compiler.jar --charset UTF-8 --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=externsValidation --language_in ECMASCRIPT5 --externs system/compile/custom.js --externs system/compile/jquery-1.8.3.min.js --externs system/lib/avatars.js --externs system/lib/plug.js --externs system/lib/room.js --js PCFW.js --js_output_file=compiled.js 2> build.log
+java -jar system/compiler.jar --charset UTF-8 --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=externsValidation --language_in ECMASCRIPT5 --externs system/compile/custom.js --externs system/compile/jquery-1.8.3.min.js --externs system/lib/avatars.js --externs system/lib/plug.js --externs system/lib/room.js --externs system/lib/lang.js --js PCFW.js --js_output_file=compiled.js 2> build.log
 echo //Generated at %DATE% %HOUR%:%TIME:~3,5% > PCFW.min.js
 type compiled.js >> PCFW.min.js
 SET PROGRESS=4
