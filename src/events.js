@@ -1,19 +1,4 @@
 PCFW.events = {
-    CHAT:              "chat",
-    CURATE_UPDATE:     "curateUpdate",
-    DJ_ADVANCE:        "djAdvance",
-    DJ_UPDATE:         "djUpdate",
-    FAN_JOIN:          "fanJoin",
-    FRIEND_JOIN:       "friendJoin",
-    MOD_SKIP:          "modSkip",
-    ROOM_SCORE_UPDATE: "roomScoreUpdate",
-    USER_FAN:          "userFan",
-    USER_JOIN:         "userJoin",
-    USER_LEAVE:        "userLeave",
-    USER_SKIP:         "userSkip",
-    VOTE_SKIP:         "voteSkip",
-    VOTE_UPDATE:       "voteUpdate",
-    WAIT_LIST_UPDATE:  "waitListUpdate",
     __events: {},
     __prioritySort: function(a,b) { return a.priority > b.priority ? 1 : a.priority < b.priority ? -1 : 0; },
     priority: {
@@ -70,11 +55,11 @@ PCFW.events = {
         return found;
     },
     emit: function(type,data) {
-        if (type === undefined || type === null || data === undefined || data === null) return false;
-        if (PCFW.events.__events[type] === undefined) return true;
+        if (type === undefined || type === null) return false;
+        if (data === undefined || data === null) data = {};
         for (var i in PCFW.events.__events[type]) {
             if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
-                return;
+                continue;
             try {
                 if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined)
                     PCFW.events.__events[type].splice(i,1);

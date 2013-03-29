@@ -18,7 +18,7 @@ PCFW.override = {
 
 
             PCFW.__original.chatReceiveProxy    = $.proxy(Models.chat.receive,Models.chat);
-            PCFW.events.on(PCFW.events.CHAT,PCFW.__original.chatReceiveProxy,PCFW.events.priority.SYSTEM);
+            PCFW.events.on(API.CHAT,PCFW.__original.chatReceiveProxy,PCFW.events.priority.SYSTEM);
 
             PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
             PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
@@ -77,6 +77,52 @@ PCFW.override = {
         },
         kill: function() {
             API.delayDispatch                   = PCFW.__original.delayDispatch;
+        }
+    },
+    Socket: {
+        init: function() {
+            PCFW.__original.socketOpen          = Socket.open;
+            /**
+            * @this {Socket}
+            */
+            Socket.open                         = function() {
+                                                    this.backoff = 0;
+                                                    var a = Slug,
+                                                        b = this;
+                                                    Models.room.data.id && (a = Models.room.data.id);
+                                                    console.log("open!",a);
+                                                    a = new RoomJoinService(a);
+                                                    a.successCallback = function() {
+                                                        b.pong();
+                                                        PCFW.events.emit('onSocketJoin',{});
+                                                    };
+                                                    a.errorCallback = function() {
+                                                        console.log("boom time");
+                                                        PCFW.events.emit('onSocketError',{});
+                                                    }
+                                                };
+
+            PCFW.__original.socketClose         = Socket.close;
+            /**
+            * @this {Socket}
+            */
+            Socket.close                        = function(data) {
+                                                    if (data) {
+                                                        if (!data.wasClean) {
+                                                            console.info("closing",data);
+                                                            data = this.backoff;
+                                                            if (5 >= data) {
+                                                                data += 1;
+                                                                socketInit(data);
+                                                            }
+                                                        } else alert("This session has now ended. Goodbye.");
+                                                    }
+                                                    PCFW.events.emit('onSocketClose',{});
+                                                };
+        },
+        kill: function() {
+            Socket.open                         = PCFW.__original.socketOpen;
+            Socket.close                        = PCFW.__original.socketClose;
         }
     }
 };

@@ -1,6 +1,6 @@
 module("room");
 
-test("changing woot/meh",function() {
+test("changing woot/meh button images",function() {
     var testValue = 'image.png';
 
     PCFW.room.images.woot.normal(testValue);

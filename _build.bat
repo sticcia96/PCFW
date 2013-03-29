@@ -27,9 +27,7 @@ SET PROGRESS=2
 SET RETURN=STEP3
 GOTO SHOWPROGRESS
 :STEP3
-CD system/lib
-git pull --quiet origin master
-CD ../..
+git submodule foreach git pull origin master
 SET PROGRESS=3
 SET RETURN=STEP4
 GOTO SHOWPROGRESS
