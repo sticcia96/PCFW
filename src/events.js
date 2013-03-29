@@ -57,19 +57,33 @@ PCFW.events = {
     emit: function(type,data) {
         if (type === undefined || type === null) return false;
         if (data === undefined || data === null) data = {};
-        for (var i in PCFW.events.__events[type]) {
+        var length = PCFW.events.__events[type].length;
+        for (var i = 0;i < length;i++) {
             if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
                 continue;
             try {
-                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined)
+                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined) {
                     PCFW.events.__events[type].splice(i,1);
-                else
+                    i--;
+                    length--;
+                } else
                     PCFW.events.__events[type][i].callback(data);
 
-                if (PCFW.events.__events[type][i].once)
+                if (PCFW.events.__events[type][i].once) {
                     PCFW.events.__events[type].splice(i,1);
+                    i--;
+                    length--;
+                }
             } catch (e) {
-                PCFW.console.error('emit',{error:e,type:type,data:data});
+                PCFW.events.__events[type].splice(i,1);
+                i--;
+                length--;
+                try {
+                    PCFW.events.emit(type,data);
+                } catch (e) {
+                    throw e;
+                }
+                throw new EventEmitError({error:e,type:type,data:data});
             }
         }
         return true;

@@ -1,4 +1,4 @@
-//Generated at 29-03-2013 18:44:09 
+//Generated at 29-03-2013 19:52:34 
 /**
  * @this {NotImplementedError}
  */
@@ -7,6 +7,19 @@ function NotImplementedError(message) {
     this.message = (message || "");
 }
 NotImplementedError.prototype = Error.prototype;
+/**
+ * @this {EventEmitError}
+ */
+function EventEmitError(data) {
+    this.name = "EventEmitError";
+    this.message = "emit";
+    this.error = data.error;
+    this.event = {
+        type: data.type,
+        data: data.data
+    }
+}
+EventEmitError.prototype = Error.prototype;
 
 if (typeof PCFW !== "undefined") PCFW.kill();
 
@@ -15,7 +28,7 @@ var PCFW = {
     version: {
         major: 0,
         minor: 6,
-        patch: 1
+        patch: 2
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
@@ -163,19 +176,33 @@ PCFW.events = {
     emit: function(type,data) {
         if (type === undefined || type === null) return false;
         if (data === undefined || data === null) data = {};
-        for (var i in PCFW.events.__events[type]) {
+        var length = PCFW.events.__events[type].length;
+        for (var i = 0;i < length;i++) {
             if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
                 continue;
             try {
-                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined)
+                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined) {
                     PCFW.events.__events[type].splice(i,1);
-                else
+                    i--;
+                    length--;
+                } else
                     PCFW.events.__events[type][i].callback(data);
 
-                if (PCFW.events.__events[type][i].once)
+                if (PCFW.events.__events[type][i].once) {
                     PCFW.events.__events[type].splice(i,1);
+                    i--;
+                    length--;
+                }
             } catch (e) {
-                PCFW.console.error('emit',{error:e,type:type,data:data});
+                PCFW.events.__events[type].splice(i,1);
+                i--;
+                length--;
+                try {
+                    PCFW.events.emit(type,data);
+                } catch (e) {
+                    throw e;
+                }
+                throw new EventEmitError({error:e,type:type,data:data});
             }
         }
         return true;

@@ -46,7 +46,7 @@ GOTO SHOWPROGRESS
 :STEP6
 ECHO.
 FOR /F "usebackq" %%A IN ('build.log') DO SET LOGSIZE=%%~zA
-IF %LOGSIZE% GTR 0 ECHO Build status: Errors and/or warnings, read build.log for more details
+IF %LOGSIZE% GTR 0 GOTO BUILDERRORS
 IF %LOGSIZE%==0 (
     ECHO Build status: No errors
     RM build.log
@@ -54,6 +54,14 @@ IF %LOGSIZE%==0 (
 ECHO.
 ECHO ==== DONE ====
 GOTO END
+
+:BUILDERRORS
+ECHO Build status: Errors and/or warnings, read build.log for more details
+ECHO.
+ECHO ==== DONE ====
+PAUSE
+GOTO END
+
 
 :SHOWPROGRESS
 CLS
@@ -86,4 +94,3 @@ IF !PROGRESS! GEQ 5 ECHO CLEAN UP             : DONE
 GOTO %RETURN%
 
 :END
-PAUSE

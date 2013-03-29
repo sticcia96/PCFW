@@ -14,7 +14,7 @@ test("emit event",function(assert) {
             strictEqual(data.test,true,"event data received");
         };
     expect(4);
-    PCFW.events.on("testEmit",callback);
+    PCFW.events.once("testEmit",callback);
     strictEqual(PCFW.events.emit("testEmit",{test:true}),true,"emit of event");
     assert.step(2);
     PCFW.events.off("testEmit",callback);
@@ -72,5 +72,7 @@ test("catch errors on events",function(assert) {
         normalCallback = function() { ok(true,"other events called after error"); };
     PCFW.events.once("testErrorCatch",errorCallback  ,PCFW.events.priority.HIGHEST);
     PCFW.events.once("testErrorCatch",normalCallback);
-    throws(PCFW.events.emit("testErrorCatch"),"error catched");
+    throws(function() {
+        PCFW.events.emit("testErrorCatch");
+    },EventEmitError,"error catched");
 });

@@ -6,6 +6,19 @@ function NotImplementedError(message) {
     this.message = (message || "");
 }
 NotImplementedError.prototype = Error.prototype;
+/**
+ * @this {EventEmitError}
+ */
+function EventEmitError(data) {
+    this.name = "EventEmitError";
+    this.message = "emit";
+    this.error = data.error;
+    this.event = {
+        type: data.type,
+        data: data.data
+    }
+}
+EventEmitError.prototype = Error.prototype;
 
 if (typeof PCFW !== "undefined") PCFW.kill();
 
@@ -14,7 +27,7 @@ var PCFW = {
     version: {
         major: 0,
         minor: 6,
-        patch: 1
+        patch: 2
     },
     getVersion: function() {
         return PCFW.version.major + '.' + PCFW.version.minor + '.' + PCFW.version.patch;
