@@ -1,4 +1,5 @@
-var PCFW = {
+var NotImplementedError,EventEmitError,
+PCFW = {
     version: {
         major: 0,
         minor: 0,
@@ -66,4 +67,8 @@ var PCFW = {
         },
         text: {}
     }
+};
+var data = {
+    mention: false,
+    cancelled: false
 };
