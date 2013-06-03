@@ -27,18 +27,23 @@ SET PROGRESS=2
 SET RETURN=STEP3
 GOTO SHOWPROGRESS
 :STEP3
-git submodule foreach git pull origin master
+:: git submodule foreach git pull origin master
+git  submodule update --init ""
 SET PROGRESS=3
 SET RETURN=STEP4
 GOTO SHOWPROGRESS
 :STEP4
-java -jar system/compiler.jar --charset UTF-8 --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=externsValidation --language_in ECMASCRIPT5 --externs system/compile/custom.js --externs system/compile/jquery-1.8.3.min.js --externs system/lib/avatars.js --externs system/lib/plug.js --externs system/lib/room.js --externs system/lib/lang.js --js PCFW.js --js_output_file=compiled.js 2> build.log
+type PCFW.js >> PCFW.temp.js
+echo window['PCFW'] = PCFW; >> PCFW.temp.js
+echo window['PCFW']['GUI'] = PCFW.GUI; >> PCFW.temp.js
+java -jar system/compiler.jar --charset UTF-8 --compilation_level ADVANCED_OPTIMIZATIONS --jscomp_off=externsValidation --language_in ECMASCRIPT5 --externs system/compile/custom.js --externs system/compile/jquery-1.8.3.min.js --externs system/lib/avatars.js --externs system/lib/plug.js --externs system/lib/room.js --externs system/lib/lang.js --js PCFW.temp.js --js_output_file=compiled.js 2> build.log
 echo //Generated at %DATE% %HOUR%:%TIME:~3,5% > PCFW.min.js
 type compiled.js >> PCFW.min.js
 SET PROGRESS=4
 SET RETURN=STEP5
 GOTO SHOWPROGRESS
 :STEP5
+rm PCFW.temp.js
 rm compiled.js
 SET PROGRESS=5
 SET RETURN=STEP6

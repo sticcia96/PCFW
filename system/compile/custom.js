@@ -29,7 +29,7 @@ PCFW = {
             MONITOR: 0
         }
     },
-    gui: {
+    GUI: {
         __GUI: {
             init: function() {},
             data: function() {},
@@ -71,4 +71,30 @@ PCFW = {
 var data = {
     mention: false,
     cancelled: false
+};
+API = {
+    __events: {},
+    CHAT              : "",
+    USER_SKIP         : "",
+    USER_JOIN         : "",
+    USER_LEAVE        : "",
+    USER_FAN          : "",
+    FRIEND_JOIN       : "",
+    FAN_JOIN          : "",
+    VOTE_UPDATE       : "",
+    CURATE_UPDATE     : "",
+    ROOM_SCORE_UPDATE : "",
+    DJ_ADVANCE        : "",
+    DJ_UPDATE         : "",
+    VOTE_SKIP         : "",
+    MOD_SKIP          : "",
+    WAIT_LIST_UPDATE  : ""
+};
+Models = {
+    user: {
+        data: {}
+    },
+    room: {
+        data: {}
+    }
 };

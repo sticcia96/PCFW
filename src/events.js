@@ -10,76 +10,88 @@ PCFW.events = {
         SYSTEM:  5,
         MONITOR: 6
     },
+    /**
+     * @this (PCFW.events)
+     */
     on: function(type,callback,priority) {
         if (type === undefined || type === null || callback === undefined || callback === null) return false;
-        if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
-        if (priority === undefined) priority = PCFW.events.priority.NORMAL;
+        if (this.__events[type] === undefined) this.__events[type] = [];
+        if (priority === undefined) priority = this.priority.NORMAL;
         else {
             var a = false;
-            for (var b in PCFW.events.priority) {
-                if (PCFW.events.priority[b] === priority)
+            for (var b in this.priority) {
+                if (this.priority[b] === priority)
                     a = true;
             }
-            if (!a) priority = PCFW.events.priority.NORMAL;
+            if (!a) priority = this.priority.NORMAL;
         }
-        PCFW.events.__events[type].push({
+        this.__events[type].push({
             callback: callback,
             once:     false,
             priority: priority
         });
-        PCFW.events.__events[type].sort(PCFW.events.__prioritySort);
+        this.__events[type].sort(this.__prioritySort);
         return true;
     },
+    /**
+     * @this (PCFW.events)
+     */
     once: function(type,callback,priority) {
         if (type === undefined || type === null || callback === undefined || callback === null) return false;
-        if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
-        if (priority === undefined) priority = PCFW.events.priority.NORMAL;
-        PCFW.events.__events[type].push({
+        if (this.__events[type] === undefined) this.__events[type] = [];
+        if (priority === undefined) priority = this.priority.NORMAL;
+        this.__events[type].push({
             callback: callback,
             once:     true,
             priority: priority
         });
-        PCFW.events.__events[type].sort(PCFW.events.__prioritySort);
+        this.__events[type].sort(this.__prioritySort);
         return true;
     },
+    /**
+     * @this (PCFW.events)
+     */
     off: function(type,callback) {
         if (type === undefined || type === null || callback === undefined || callback === null) return false;
-        if (PCFW.events.__events[type] === undefined) return false;
+        if (this.__events[type] === undefined) return false;
         var found = false;
-        for (var i in PCFW.events.__events[type]) {
-            if (PCFW.events.__events[type][i].callback === callback) {
-                PCFW.events.__events[type].splice(i,1);
+        for (var i in this.__events[type]) {
+            if (this.__events[type][i].callback === callback) {
+                this.__events[type].splice(i,1);
                 found = true;
             }
         }
         return found;
     },
+    /**
+     * @this (PCFW.events)
+     */
     emit: function(type,data) {
-        if (type === undefined || type === null) return false;
+        if (type === undefined || type === null || this.__events[type] === undefined) return false;
         if (data === undefined || data === null) data = {};
-        var length = PCFW.events.__events[type].length;
+        var length = this.__events[type].length;
         for (var i = 0;i < length;i++) {
-            if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
+            if (typeof data.cancelled !== "undefined" && data.cancelled === true && this.__events[type][i].priority < this.priority.MONITOR)
                 continue;
             try {
-                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined) {
-                    PCFW.events.__events[type].splice(i,1);
+                if (this.__events[type][i] === undefined || this.__events[type][i].callback === undefined) {
+                    this.__events[type].splice(i,1);
                     i--;
                     length--;
                 } else
-                    PCFW.events.__events[type][i].callback(data);
+                    this.__events[type][i].callback(data);
 
-                if (PCFW.events.__events[type][i].once) {
-                    PCFW.events.__events[type].splice(i,1);
+                if (this.__events[type][i].once) {
+                    this.__events[type].splice(i,1);
                     i--;
                     length--;
                 }
             } catch (e) {
-                PCFW.events.__events[type].splice(i,1);
+                this.__events[type].splice(i,1);
                 i--;
                 length--;
                 try {
-                    PCFW.events.emit(type,data);
+                    this.emit(type,data);
                 } catch (e) {
                     throw e;
                 }

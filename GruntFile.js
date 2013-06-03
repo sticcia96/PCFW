@@ -3,12 +3,12 @@ module.exports = function(grunt) {
     "use strict";
 
     var readOptionalJSON = function(filepath) {
-            var data = {};
-            try {
-                data = grunt.file.readJSON(filepath);
-            } catch(e) {}
-            return data;
-        };
+        var data = {};
+        try {
+            data = grunt.file.readJSON(filepath);
+        } catch(e) {}
+        return data;
+    };
 
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
@@ -39,13 +39,10 @@ module.exports = function(grunt) {
             tests = grunt.config([this.name,"tests"]),
             testNames = tests;
 
-        if ( pull ) {
-            jobName = "PCFW pull <a href='https://github.com/TATDK/PCFW/pull/" +
-                pull[ 1 ] + "'>#" + pull[ 1 ] + "</a>";
-        } else {
-            jobName = "PCFW commit #<a href='https://github.com/TATDK/PCFW/commit/" +
-                commit + "'>" + commit.substr( 0, 10 ) + "</a>";
-        }
+        if ( pull )
+            jobName = "PCFW pull <a href='https://github.com/TATDK/PCFW/pull/" + pull[ 1 ] + "'>#" + pull[ 1 ] + "</a>";
+        else
+            jobName = "PCFW commit #<a href='https://github.com/TATDK/PCFW/commit/" + commit + "'>" + commit.substr( 0, 10 ) + "</a>";
 
         tests.forEach(function(test) {
             testUrls.push(config.testUrl + commit + "/test/index.html?module=" + test);

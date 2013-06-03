@@ -1,15 +1,25 @@
 PCFW.override = {
+    /**
+     * @this (PCFW.override)
+     */
     init: function() {
-        var objects = Object.keys(PCFW.override);
+        var objects = Object.keys(this);
         objects.splice(0,2);
-        for (var i in objects)
-            PCFW.override[objects[i]].init();
+        for (var i in objects) {
+            if (typeof this[objects[i]].init === 'function')
+                this[objects[i]].init();
+        }
     },
+    /**
+     * @this (PCFW.override)
+     */
     kill: function() {
-        var objects = Object.keys(PCFW.override);
+        var objects = Object.keys(this);
         objects.splice(0,2);
-        for (var i in objects)
-            PCFW.override[objects[i]].kill();
+        for (var i in objects) {
+            if (typeof this[objects[i]].kill === 'function')
+                this[objects[i]].kill();
+        }
     },
     chatModels: {
         init: function() {
@@ -18,7 +28,11 @@ PCFW.override = {
 
 
             PCFW.__original.chatReceiveProxy    = $.proxy(Models.chat.receive,Models.chat);
-            PCFW.events.on(API.CHAT,PCFW.__original.chatReceiveProxy,PCFW.events.priority.SYSTEM);
+            PCFW.events.on(
+                API.CHAT,
+                PCFW.__original.chatReceiveProxy,
+                PCFW.events.priority.SYSTEM
+            );
 
             PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
             PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
@@ -54,9 +68,20 @@ PCFW.override = {
                                                         data.mention = true;
                                                     API.delayDispatch(API.CHAT,data);
                                                 };
+            PCFW.__original.SocketListenerUserUpdate = SocketListener.userUpdate;
+            SocketListener.userUpdate                = function(data) {
+                                                         if (Models.room.data.users) {
+                                                             var user = Models.room.userHash[data.id];
+                                                             if (user) {
+                                                                 API.delayDispatch("userUpdate",{userid:data.id,before: jQuery.extend(true,{},user),now: data,cancelled: false});
+                                                                 Models.room.userUpdate(data);
+                                                             }
+                                                         }
+                                                     };
         },
         kill: function() {
             SocketListener.chat                 = PCFW.__original.SocketListenerChat;
+            SocketListener.userUpdate           = PCFW.__original.SocketListenerUserUpdate;
         }
     },
     API: {
@@ -123,6 +148,12 @@ PCFW.override = {
         kill: function() {
             Socket.open                         = PCFW.__original.socketOpen;
             Socket.close                        = PCFW.__original.socketClose;
+        }
+    },
+    ModelsRoom: {
+        init: function() {
+            PCFW.__original.userUpdateeProxy    = $.proxy(Models.room.userUpdate,Models.room);
+            PCFW.events.on("userUpdate",PCFW.__original.userUpdateeProxy,PCFW.events.priority.SYSTEM);
         }
     }
 };

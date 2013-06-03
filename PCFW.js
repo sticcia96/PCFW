@@ -1,4 +1,4 @@
-//Generated at 29-03-2013 20:00:47 
+//Generated at 03-06-2013 19:07:43 
 /**
  * @this {NotImplementedError}
  */
@@ -99,22 +99,34 @@ PCFW.console = {
 }; 
 PCFW.commands = {
     __commands: {},
+    /**
+     * @this {PCFW.commands}
+     */
     add: function(command,callback) {
         if (command !== undefined) command = command.toString();
-        if (command === undefined || command.length < 1 || command.indexOf(' ') > -1 || callback === undefined || PCFW.commands.isset(command) === true) return false;
-        return PCFW.commands.__commands[command.toString()] = callback,true;
+        if (command === undefined || command.length < 1 || command.indexOf(' ') > -1 || callback === undefined || this.isset(command) === true) return false;
+        return this.__commands[command.toString()] = callback,true;
     },
+    /**
+     * @this {PCFW.commands}
+     */
     remove: function(command) {
-        if (command === undefined || PCFW.commands.__commands[command.toString()] === undefined) return false;
-        return delete PCFW.commands.__commands[command.toString()],true;
+        if (command === undefined || this.isset(command) === false) return false;
+        return delete this.__commands[command.toString()],true;
     },
+    /**
+     * @this {PCFW.commands}
+     */
     isset: function(command) {
         if (command === undefined) return false;
-        return PCFW.commands.__commands[command.toString()] !== undefined;
+        return this.__commands[command.toString()] !== undefined;
     },
+    /**
+     * @this {PCFW.commands}
+     */
     execute: function(command,data) {
-        if (PCFW.commands.isset(command) === false) return false;
-        PCFW.commands.__commands[command.toString()](data);
+        if (this.isset(command) === false) return false;
+        this.__commands[command.toString()](data);
     }
 }; 
 PCFW.events = {
@@ -129,76 +141,88 @@ PCFW.events = {
         SYSTEM:  5,
         MONITOR: 6
     },
+    /**
+     * @this (PCFW.events)
+     */
     on: function(type,callback,priority) {
         if (type === undefined || type === null || callback === undefined || callback === null) return false;
-        if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
-        if (priority === undefined) priority = PCFW.events.priority.NORMAL;
+        if (this.__events[type] === undefined) this.__events[type] = [];
+        if (priority === undefined) priority = this.priority.NORMAL;
         else {
             var a = false;
-            for (var b in PCFW.events.priority) {
-                if (PCFW.events.priority[b] === priority)
+            for (var b in this.priority) {
+                if (this.priority[b] === priority)
                     a = true;
             }
-            if (!a) priority = PCFW.events.priority.NORMAL;
+            if (!a) priority = this.priority.NORMAL;
         }
-        PCFW.events.__events[type].push({
+        this.__events[type].push({
             callback: callback,
             once:     false,
             priority: priority
         });
-        PCFW.events.__events[type].sort(PCFW.events.__prioritySort);
+        this.__events[type].sort(this.__prioritySort);
         return true;
     },
+    /**
+     * @this (PCFW.events)
+     */
     once: function(type,callback,priority) {
         if (type === undefined || type === null || callback === undefined || callback === null) return false;
-        if (PCFW.events.__events[type] === undefined) PCFW.events.__events[type] = [];
-        if (priority === undefined) priority = PCFW.events.priority.NORMAL;
-        PCFW.events.__events[type].push({
+        if (this.__events[type] === undefined) this.__events[type] = [];
+        if (priority === undefined) priority = this.priority.NORMAL;
+        this.__events[type].push({
             callback: callback,
             once:     true,
             priority: priority
         });
-        PCFW.events.__events[type].sort(PCFW.events.__prioritySort);
+        this.__events[type].sort(this.__prioritySort);
         return true;
     },
+    /**
+     * @this (PCFW.events)
+     */
     off: function(type,callback) {
         if (type === undefined || type === null || callback === undefined || callback === null) return false;
-        if (PCFW.events.__events[type] === undefined) return false;
+        if (this.__events[type] === undefined) return false;
         var found = false;
-        for (var i in PCFW.events.__events[type]) {
-            if (PCFW.events.__events[type][i].callback === callback) {
-                PCFW.events.__events[type].splice(i,1);
+        for (var i in this.__events[type]) {
+            if (this.__events[type][i].callback === callback) {
+                this.__events[type].splice(i,1);
                 found = true;
             }
         }
         return found;
     },
+    /**
+     * @this (PCFW.events)
+     */
     emit: function(type,data) {
-        if (type === undefined || type === null) return false;
+        if (type === undefined || type === null || this.__events[type] === undefined) return false;
         if (data === undefined || data === null) data = {};
-        var length = PCFW.events.__events[type].length;
+        var length = this.__events[type].length;
         for (var i = 0;i < length;i++) {
-            if (typeof data.cancelled !== "undefined" && data.cancelled === true && PCFW.events.__events[type][i].priority < PCFW.events.priority.MONITOR)
+            if (typeof data.cancelled !== "undefined" && data.cancelled === true && this.__events[type][i].priority < this.priority.MONITOR)
                 continue;
             try {
-                if (PCFW.events.__events[type][i] === undefined || PCFW.events.__events[type][i].callback === undefined) {
-                    PCFW.events.__events[type].splice(i,1);
+                if (this.__events[type][i] === undefined || this.__events[type][i].callback === undefined) {
+                    this.__events[type].splice(i,1);
                     i--;
                     length--;
                 } else
-                    PCFW.events.__events[type][i].callback(data);
+                    this.__events[type][i].callback(data);
 
-                if (PCFW.events.__events[type][i].once) {
-                    PCFW.events.__events[type].splice(i,1);
+                if (this.__events[type][i].once) {
+                    this.__events[type].splice(i,1);
                     i--;
                     length--;
                 }
             } catch (e) {
-                PCFW.events.__events[type].splice(i,1);
+                this.__events[type].splice(i,1);
                 i--;
                 length--;
                 try {
-                    PCFW.events.emit(type,data);
+                    this.emit(type,data);
                 } catch (e) {
                     throw e;
                 }
@@ -209,118 +233,106 @@ PCFW.events = {
     }
 }; 
 PCFW.GUI = {
-    __GUI: Class.extend({
-        /**
-         * @this {__GUI}
-         */
-        init: function() {
-            this.__data = {};
-            return this;
-        },
-        /**
-         * @this {__GUI}
-         */
-        data: function(setting,value) {
-            if (value === undefined) return this.__data[setting];
-            this.__data[setting] = value;
-            return this;
-        },
-        /**
-         * @this {__GUI}
-         */
-        width: function(width) {
-            return this.data('width',width);
-        },
-        /**
-         * @this {__GUI}
-         */
-        height: function(height) {
-            return this.data('height',height);
-        },
-        /**
-         * @this {__GUI}
-         */
-        textfield: function() {
-            throw new NotImplementedError();
-        },
-        /**
-         * @this {__GUI}
-         */
-        toggle: function() {
-            throw new NotImplementedError();
-        },
-        /**
-         * @this {__GUI}
-         */
-        checkbox: function() {
-            throw new NotImplementedError();
-        },
-        /**
-         * @this {__GUI}
-         */
-        button: function() {
-            throw new NotImplementedError();
-        }
-    }),
     new: function() {
-        return new PCFW.GUI.__GUI();
+        return new PCFWGUI();
     }
-}; 
+};
+var PCFWGUI = Class.extend({
+    /**
+     * @this {PCFWGUI}
+     */
+    init: function() {
+        this.__data = {};
+        return this;
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    data: function(setting,value) {
+        if (value === undefined) return this.__data[setting];
+        this.__data[setting] = value;
+        return this;
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    width: function(width) {
+        return this.data('width',width);
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    height: function(height) {
+        return this.data('height',height);
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    textfield: function() {
+        throw new NotImplementedError();
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    toggle: function() {
+        throw new NotImplementedError();
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    checkbox: function() {
+        throw new NotImplementedError();
+    },
+    /**
+     * @this {PCFWGUI}
+     */
+    button: function() {
+        throw new NotImplementedError();
+    }
+}) 
 PCFW.room = {
     images: {
         woot: {
             normal: function(url) {
-                if (url === undefined) return Lang.ui.buttonVotePositive;
-                Lang.ui.buttonVotePositive = url;
+                return url === undefined ? Lang.ui.buttonVotePositive : Lang.ui.buttonVotePositive = url;
             },
             disabled: function(url) {
-                if (url === undefined) return Lang.ui.buttonVotePositiveDisabled;
-                Lang.ui.buttonVotePositiveDisabled = url;
+                return url === undefined ? Lang.ui.buttonVotePositiveDisabled : Lang.ui.buttonVotePositiveDisabled = url;
             },
             selected: function(url) {
-                if (url === undefined) return Lang.ui.buttonVotePositiveSelected;
-                Lang.ui.buttonVotePositiveSelected = url;
+                return url === undefined ? Lang.ui.buttonVotePositiveSelected : Lang.ui.buttonVotePositiveSelected = url;
             },
             popout: {
                 normal: function(url) {
-                    if (url === undefined) return Lang.ui.buttonVotePositivePopout;
-                    Lang.ui.buttonVotePositivePopout = url;
+                    return url === undefined ? Lang.ui.buttonVotePositivePopout : Lang.ui.buttonVotePositivePopout = url;
                 },
                 disabled: function(url) {
-                    if (url === undefined) return Lang.ui.buttonVotePositiveDisabledPopout;
-                    Lang.ui.buttonVotePositiveDisabledPopout = url;
+                    return url === undefined ? Lang.ui.buttonVotePositiveDisabledPopout : Lang.ui.buttonVotePositiveDisabledPopout = url;
                 },
                 selected: function(url) {
-                    if (url === undefined) return Lang.ui.buttonVotePositiveSelectedPopout;
-                    Lang.ui.buttonVotePositiveSelectedPopout = url;
+                    return url === undefined ? Lang.ui.buttonVotePositiveSelectedPopout : Lang.ui.buttonVotePositiveSelectedPopout = url;
                 }
             }
         },
         meh: {
             normal: function(url) {
-                if (url === undefined) return Lang.ui.buttonVoteNegative;
-                Lang.ui.buttonVoteNegative = url;
+                return url === undefined ? Lang.ui.buttonVoteNegative : Lang.ui.buttonVoteNegative = url;
             },
             disabled: function(url) {
-                if (url === undefined) return Lang.ui.buttonVoteNegativeDisabled;
-                Lang.ui.buttonVoteNegativeDisabled = url;
+                return url === undefined ? Lang.ui.buttonVoteNegativeDisabled : Lang.ui.buttonVoteNegativeDisabled = url;
             },
             selected: function(url) {
-                if (url === undefined) return Lang.ui.buttonVoteNegativeSelected;
-                Lang.ui.buttonVoteNegativeSelected = url;
+                return url === undefined ? Lang.ui.buttonVoteNegativeSelected : Lang.ui.buttonVoteNegativeSelected = url;
             },
             popout: {
                 normal: function(url) {
-                    if (url === undefined) return Lang.ui.buttonVoteNegativePopout;
-                    Lang.ui.buttonVoteNegativePopout = url;
+                    return url === undefined ? Lang.ui.buttonVoteNegativePopout : Lang.ui.buttonVoteNegativePopout = url;
                 },
                 disabled: function(url) {
-                    if (url === undefined) return Lang.ui.buttonVoteNegativeDisabledPopout;
-                    Lang.ui.buttonVoteNegativeDisabledPopout = url;
+                    return url === undefined ? Lang.ui.buttonVoteNegativeDisabledPopout : Lang.ui.buttonVoteNegativeDisabledPopout = url;
                 },
                 selected: function(url) {
-                    if (url === undefined) return Lang.ui.buttonVoteNegativeSelectedPopout;
-                    Lang.ui.buttonVoteNegativeSelectedPopout = url;
+                    return url === undefined ? Lang.ui.buttonVoteNegativeSelectedPopout : Lang.ui.buttonVoteNegativeSelectedPopout = url;
                 }
             }
         }
@@ -330,17 +342,27 @@ PCFW.room = {
     }
 }; 
 PCFW.override = {
+    /**
+     * @this (PCFW.override)
+     */
     init: function() {
-        var objects = Object.keys(PCFW.override);
+        var objects = Object.keys(this);
         objects.splice(0,2);
-        for (var i in objects)
-            PCFW.override[objects[i]].init();
+        for (var i in objects) {
+            if (typeof this[objects[i]].init === 'function')
+                this[objects[i]].init();
+        }
     },
+    /**
+     * @this (PCFW.override)
+     */
     kill: function() {
-        var objects = Object.keys(PCFW.override);
+        var objects = Object.keys(this);
         objects.splice(0,2);
-        for (var i in objects)
-            PCFW.override[objects[i]].kill();
+        for (var i in objects) {
+            if (typeof this[objects[i]].kill === 'function')
+                this[objects[i]].kill();
+        }
     },
     chatModels: {
         init: function() {
@@ -349,7 +371,11 @@ PCFW.override = {
 
 
             PCFW.__original.chatReceiveProxy    = $.proxy(Models.chat.receive,Models.chat);
-            PCFW.events.on(API.CHAT,PCFW.__original.chatReceiveProxy,PCFW.events.priority.SYSTEM);
+            PCFW.events.on(
+                API.CHAT,
+                PCFW.__original.chatReceiveProxy,
+                PCFW.events.priority.SYSTEM
+            );
 
             PCFW.events.on("chatSoundUpdate",   $.proxy(Chat.onChatSoundUpdate,Chat));
             PCFW.events.on("chatDelete",        $.proxy(Chat.onChatDelete,Chat));
@@ -385,9 +411,20 @@ PCFW.override = {
                                                         data.mention = true;
                                                     API.delayDispatch(API.CHAT,data);
                                                 };
+            PCFW.__original.SocketListenerUserUpdate = SocketListener.userUpdate;
+            SocketListener.userUpdate                = function(data) {
+                                                         if (Models.room.data.users) {
+                                                             var user = Models.room.userHash[data.id];
+                                                             if (user) {
+                                                                 API.delayDispatch("userUpdate",{userid:data.id,before: jQuery.extend(true,{},user),now: data,cancelled: false});
+                                                                 Models.room.userUpdate(data);
+                                                             }
+                                                         }
+                                                     };
         },
         kill: function() {
             SocketListener.chat                 = PCFW.__original.SocketListenerChat;
+            SocketListener.userUpdate           = PCFW.__original.SocketListenerUserUpdate;
         }
     },
     API: {
@@ -455,8 +492,12 @@ PCFW.override = {
             Socket.open                         = PCFW.__original.socketOpen;
             Socket.close                        = PCFW.__original.socketClose;
         }
+    },
+    ModelsRoom: {
+        init: function() {
+            PCFW.__original.userUpdateeProxy    = $.proxy(Models.room.userUpdate,Models.room);
+            PCFW.events.on("userUpdate",PCFW.__original.userUpdateeProxy,PCFW.events.priority.SYSTEM);
+        }
     }
 }; 
 PCFW.init();
-window['PCFW'] = PCFW;
-window['PCFW']['GUI'] = window['PCFW'].GUI;
